@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: snowflake-nextid
+spec:
+  containers:
+  - image: snowflake-nextid:1.0
+    name: snowflake-nextid
+    ports:
+      - containerPort: 8080
+        name: http
+        protocol: TCP
