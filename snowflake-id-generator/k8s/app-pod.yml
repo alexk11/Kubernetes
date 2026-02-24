@@ -6,7 +6,24 @@ spec:
   containers:
   - image: snowflake-nextid:1.0
     name: snowflake-nextid
+    livenessProbe:
+      httpGet:
+        path: /healthy
+        port: 8099
+      initialDelaySeconds: 70
+      timeoutSeconds: 2
+      periodSeconds: 20
+      failureThreshold: 3
+    readinessProbe:
+      httpGet:
+        path: /ready
+        port: 8099
+      initialDelaySeconds: 60
+      timeoutSeconds: 1
+      periodSeconds: 5
+      failureThreshold: 3
+      successThreshold: 1
     ports:
-      - containerPort: 8080
+      - containerPort: 8099
         name: http
         protocol: TCP
