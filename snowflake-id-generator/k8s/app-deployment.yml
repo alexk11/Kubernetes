@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: snowflake-nextid
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: snowflake-nextid
+  template:
+    metadata:
+      labels:
+        app: snowflake-nextid
+    spec:
+      containers:
+        - name: snowflake-nextid
+          image: snowflake-nextid:1.0
