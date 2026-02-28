@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: app-replicaset
+spec:
+  replicas: 3 # Необходимое количества реплик
+  selector:
+    matchLabels:
+      app: app # Селектор поиска (маппинга) объектов Pod для ReplicaSet
+  template:
+    metadata:
+      labels:
+        app: app # Метка Pod по которой ReplicaSet будет его искать
+    spec:
+      containers:
+        - name: app
+          image: snowflake-nextid:1.0
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthy
+              port: 8080
+            initialDelaySeconds: 30
+            timeoutSeconds: 2
+            periodSeconds: 40
+            failureThreshold: 3
+            successThreshold: 1
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8080
+            initialDelaySeconds: 15
+            timeoutSeconds: 1
+            periodSeconds: 30
+            failureThreshold: 3
+            successThreshold: 1
