@@ -3,6 +3,7 @@ kind: Pod
 metadata:
   name: snowflake-nextid
 spec:
+  restartPolicy: Never
   containers:
   - image: snowflake-nextid:1.0
     name: snowflake-nextid
