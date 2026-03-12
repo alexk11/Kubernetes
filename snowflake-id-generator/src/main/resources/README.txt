@@ -13,3 +13,6 @@ PS C:\> kubectl logs -f snowflake-nextid
 
 PS C:\> Remove-item alias:curl
 PS C:\> curl -X GET http://localhost:8082/next-id   =>  7427738124698128384
+
+Generate TLS certs:
+openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -sha256 -days 365

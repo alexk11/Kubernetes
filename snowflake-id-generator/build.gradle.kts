@@ -26,6 +26,8 @@ dependencies {
 	implementation(libs.kotlinx.coroutines)
 	implementation(libs.springframework.boot.starter.web)
 	implementation(libs.springframework.boot.starter.actuator)
+	implementation("io.github.oshai:kotlin-logging-jvm:7.0.14")
+	implementation("org.slf4j:slf4j-simple:1.7.36")
 	testImplementation(libs.junit.jupiter)
 	testImplementation(libs.assertj.core)
 	testImplementation(libs.kotlinx.coroutines.test)

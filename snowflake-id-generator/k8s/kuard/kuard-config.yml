@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kuard-config
+data:
+  LOG_LEVEL: "debug"
+  MESSAGE: "Hello, world from ConfigMap!"
+  app-settings.json: |
+    {
+      "featureFlags":
+        {
+          "betaMode": true,
+          "metricsEnabled": true
+        }
+    }
