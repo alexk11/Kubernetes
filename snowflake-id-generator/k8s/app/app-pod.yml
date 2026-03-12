@@ -7,6 +7,25 @@ spec:
   containers:
   - image: snowflake-nextid:1.0
     name: snowflake-nextid
+    env: # Параметры из ConfigMap подключаются как переменные окружения
+      - name: LOG_LEVEL
+        valueFrom:
+          configMapKeyRef:
+            name: app-config
+            key: LOG_LEVEL
+      - name: MESSAGE
+        valueFrom:
+          configMapKeyRef:
+            name: app-config
+            key: MESSAGE
+    volumeMounts: # Параметры из ConfigMap подключаются как файл из хранилища
+      - name: app-config-volume
+        mountPath: /config
+        readOnly: true
+    ports:
+      - containerPort: 8080
+        name: http
+        protocol: TCP
     livenessProbe:
       httpGet:
         path: /healthy
@@ -24,7 +43,7 @@ spec:
       periodSeconds: 5
       failureThreshold: 3
       successThreshold: 1
-    ports:
-      - containerPort: 8080
-        name: http
-        protocol: TCP
+  volumes: # Подключение ConfigMap к объекту Pod
+    - name: app-config-volume
+      configMap:
+        name: app-config

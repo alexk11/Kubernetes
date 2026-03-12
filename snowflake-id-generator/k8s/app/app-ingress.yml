@@ -5,6 +5,10 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: contour
 spec:
+  tls:
+    - hosts:
+        - app.localdev.iprody
+      secretName: app-tls # Подключение объекта Secret с типом TLS
   rules:
     - host: app.localdev.iprody # имя хоста (можно заменить на свой)
       http:
