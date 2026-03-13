@@ -12,6 +12,7 @@ spec:
       labels:
         app: app # Метка Pod по которой ReplicaSet будет его искать
     spec:
+      restartPolicy: Always
       containers:
         - name: app
           image: snowflake-nextid:1.0

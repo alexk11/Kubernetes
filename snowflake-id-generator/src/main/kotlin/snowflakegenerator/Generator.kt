@@ -4,7 +4,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeout
+import org.slf4j.LoggerFactory
+import org.slf4j.Logger
 import org.springframework.stereotype.Service
+
 
 @Service
 class Generator(
@@ -16,7 +19,9 @@ class Generator(
 		private const val DATACENTER_BITS = 5
 		private const val WORKER_BITS = 5
 		private const val SEQUENCE_BITS = 12
+		private val log: Logger = LoggerFactory.getLogger(Generator::class.java)
 	}
+
 
 	/**
 	 * Maximum possible to be stored in 5-bits as datacenter id.
@@ -76,6 +81,7 @@ class Generator(
 	 */
 	suspend fun nextId(): Long =
 		lock.withLock {
+			log.info("Generating next id..")
 			var timestamp = settings.nextTimeSeed.invoke()
 
 			if (lastTimestamp == timestamp) {
