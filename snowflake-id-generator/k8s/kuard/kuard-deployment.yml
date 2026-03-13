@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: app-deployment
+  name: kuard-deployment
   labels:
-    app: app
+    app: kuard
   annotations:
     kubernetes.io/change-cause: "Update to 1.2.3" # Описание к ревизии
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: app
+      app: kuard
   strategy: # Стратегия развертывания типа RollingUpdate
     type: RollingUpdate
     rollingUpdate:
@@ -19,11 +19,11 @@ spec:
   template:
     metadata:
       labels:
-        app: app
+        app: kuard
     spec:
       containers:
-        - name: app
-          image: snowflake-nextid:1.0
+        - name: kuard
+          image: jmutai/kuard-amd64:blue
           ports:
             - name: http
               containerPort: 8080
