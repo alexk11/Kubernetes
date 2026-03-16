@@ -5,6 +5,9 @@ metadata:
 data:
   LOG_LEVEL: "debug"
   MESSAGE: "Hello, world from ConfigMap!"
+  spring.application.name: "snowflake-id-generator"
+  snowflake-settings.starting-epoch: "1577836800000"
+  snowflake-settings.datacenter-id: "1"
   app-settings.json: |
     {
       "featureFlags":
