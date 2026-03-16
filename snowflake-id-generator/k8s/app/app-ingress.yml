@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ingress
+  annotations:
+    kubernetes.io/ingress.class: contour
+spec:
+  rules:
+    - host: app.localdev.iprody # имя хоста (можно заменить на свой)
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend: # определяет, куда перенаправлять трафик
+              service:
+                name: app-service # имя сервиса, на который уходит запрос
+                port:
+                  number: 80 # порт сервиса, на который направляется трафик
