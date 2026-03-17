@@ -23,5 +23,7 @@ RUN useradd --system --create-home --uid 1001 appuser
 USER appuser
 # Выполнение команд от лица пользования с минимальными правами
 COPY --chown=appuser:appuser --from=builder /app/build/libs/*-SNAPSHOT-plain.jar app.jar
+# Set the environment variable
+RUN export WORKER_ID=$(cat /data/workerId)
 # Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]

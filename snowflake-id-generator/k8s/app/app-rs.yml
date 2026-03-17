@@ -12,7 +12,20 @@ spec:
       labels:
         app: app # Метка Pod по которой ReplicaSet будет его искать
     spec:
-      restartPolicy: Always
+      volumes:
+        - name: workerid-volume
+          emptyDir: { }
+      initContainers:
+        - name: generate-workerid
+          image: busybox
+          command:
+            - sh
+            - -c
+            - |
+              echo $((RANDOM % 10000)) > /data/workerId
+          volumeMounts:
+            - name: workerid-volume
+              mountPath: /data
       containers:
         - name: app
           image: snowflake-nextid:1.0
@@ -24,17 +37,19 @@ spec:
             httpGet:
               path: /healthy
               port: 8080
-            initialDelaySeconds: 30
+            initialDelaySeconds: 15
             timeoutSeconds: 2
-            periodSeconds: 40
+            periodSeconds: 20
             failureThreshold: 3
-            successThreshold: 1
           readinessProbe:
             httpGet:
               path: /ready
               port: 8080
-            initialDelaySeconds: 15
+            initialDelaySeconds: 5
             timeoutSeconds: 1
-            periodSeconds: 30
+            periodSeconds: 5
             failureThreshold: 3
             successThreshold: 1
+          volumeMounts:
+            - name: workerid-volume
+              mountPath: /data
