@@ -42,6 +42,13 @@ spec:
             - containerPort: 8080
               name: http
               protocol: TCP
+          resources:
+            requests: # Минимальное гарантируемые ресурсы
+              cpu: "500m"
+              memory: "256Mi"
+            limits: # Максимально допустимые ресурсы
+              cpu: "1000m"
+              memory: "1Gi"
           livenessProbe:
             httpGet:
               path: /healthy
