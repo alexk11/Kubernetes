@@ -8,6 +8,21 @@ spec:
   containers:
     - image: jmutai/kuard-amd64:blue
       name: kuard
+      env: # Параметры из ConfigMap подключаются как переменные окружения
+        - name: LOG_LEVEL
+          valueFrom:
+            configMapKeyRef:
+              name: kuard-config
+              key: LOG_LEVEL
+        - name: MESSAGE
+          valueFrom:
+            configMapKeyRef:
+              name: kuard-config
+              key: MESSAGE
+      volumeMounts: # Параметры из ConfigMap подключаются как файл из хранилища
+        - name: kuard-config-volume
+          mountPath: /config
+          readOnly: true
       ports:
         - containerPort: 8080
           name: http
@@ -29,3 +44,7 @@ spec:
         periodSeconds: 5
         failureThreshold: 3
         successThreshold: 1
+  volumes: # Подключение ConfigMap к объекту Pod
+    - name: kuard-config-volume
+      configMap:
+        name: kuard-config
