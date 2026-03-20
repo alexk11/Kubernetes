@@ -1,17 +1,71 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: snowflake-nextid
+  name: app-deployment
+  labels:
+    app: app
+  annotations:
+    kubernetes.io/change-cause: "Update to 1.2.3" # Описание к ревизии
 spec:
-  replicas: 3
+  replicas: 3 # Необходимое количества реплик
   selector:
     matchLabels:
-      app: snowflake-nextid
+      app: app # Селектор поиска (маппинга) объектов Pod для ReplicaSet
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
   template:
     metadata:
       labels:
-        app: snowflake-nextid
+        app: app # Метка Pod по которой ReplicaSet будет его искать
     spec:
+      volumes:
+        - name: workerid-volume
+          emptyDir: { }
+      initContainers:
+        - name: generate-workerid
+          image: busybox
+          command:
+            - sh
+            - -c
+            - |
+              echo $((RANDOM % 10000)) > /data/workerId
+          volumeMounts:
+            - name: workerid-volume
+              mountPath: /data
       containers:
-        - name: snowflake-nextid
+        - name: app
           image: snowflake-nextid:1.0
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+          resources:
+            requests: # Минимальное гарантируемые ресурсы
+              cpu: "500m"
+              memory: "256Mi"
+            limits: # Максимально допустимые ресурсы
+              cpu: "1000m"
+              memory: "1Gi"
+          livenessProbe:
+            httpGet:
+              path: /healthy
+              port: 8080
+            initialDelaySeconds: 15
+            timeoutSeconds: 2
+            periodSeconds: 20
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8080
+            initialDelaySeconds: 5
+            timeoutSeconds: 1
+            periodSeconds: 5
+            failureThreshold: 3
+            successThreshold: 1
+          volumeMounts:
+            - name: workerid-volume
+              mountPath: /data
