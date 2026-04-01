@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluentd-config
+data:
+  volumeMounts.conf: |
+    - name: varlog
+      mountPath: /var/log
+    - name: containers
+      mountPath: /var/log/containers
+      readOnly: true
+
+  volumes.conf: |
+    - name: varlog
+      hostPath:
+        path: /var/log
+    - name: containers
+      hostPath:
+        path: /var/log/containers
+
+  fluent.conf: |
+    <source>
+      @type tail
+      path /var/log/containers/*.log
+      pos_file /var/log/fluentd-containers.log.pos
+      tag kubernetes.*
+      format json
+      read_from_head true
+    </source>
+
+    # Добавляем метаданные Kubernetes
+    <filter kubernetes.**>
+      @type kubernetes_metadata
+    </filter>
+
+    # ФИЛЬТР: только Snowflake ID Generator
+    <filter kubernetes.**>
+      @type grep
+      <regexp>
+        key $.kubernetes.labels.app
+        pattern ^snowflake-nextid$
+      </regexp>
+    </filter>
+
+    <match **>
+      @type stdout
+    </match>
