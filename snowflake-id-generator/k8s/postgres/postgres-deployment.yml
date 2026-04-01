@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  labels:
+    app: postgres # Метка для обнаружения связанным объектом Service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:15
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres
+                  key: password
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: DB_NAME
+          ports:
+            - name: pg-port
+              containerPort: 5432
+          volumeMounts:
+              - name: pgdata
+                mountPath: /var/lib/postgresql/data # Директория, где Postgres хранит данные
+      volumes: # Подключение постоянного (устойчивого) хранилища
+        - name: pgdata
+          persistentVolumeClaim:
+            claimName: postgres-pvc
+

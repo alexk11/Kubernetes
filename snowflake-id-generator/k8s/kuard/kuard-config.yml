@@ -4,7 +4,7 @@ metadata:
   name: kuard-config
 data:
   LOG_LEVEL: "debug"
-  MESSAGE: "Hello, world from ConfigMap!"
+  MESSAGE: "Hello from ConfigMap"
   app-settings.json: |
     {
       "featureFlags":

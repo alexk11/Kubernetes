@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: ReplicaSet
 metadata:
-  name: app-replicaset
+  name: app-rs
 spec:
   replicas: 3 # Необходимое количества реплик
   selector:

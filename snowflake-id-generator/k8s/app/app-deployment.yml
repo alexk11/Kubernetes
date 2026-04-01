@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: app-deployment
+  name: app
   labels:
     app: app
   annotations:
-    kubernetes.io/change-cause: "Update to 1.2.3" # Описание к ревизии
+    kubernetes.io/change-cause: "Update to 1.2.3"
 spec:
-  replicas: 3 # Необходимое количества реплик
+  replicas: 3
   selector:
     matchLabels:
-      app: app # Селектор поиска (маппинга) объектов Pod для ReplicaSet
+      app: app
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -19,11 +19,11 @@ spec:
   template:
     metadata:
       labels:
-        app: app # Метка Pod по которой ReplicaSet будет его искать
+        app: app
     spec:
       volumes:
         - name: workerid-volume
-          emptyDir: { }
+          emptyDir: {}
       initContainers:
         - name: generate-workerid
           image: busybox
@@ -38,15 +38,31 @@ spec:
       containers:
         - name: app
           image: snowflake-nextid:1.0
+          env:
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: DB_URL
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres
+                  key: username
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres
+                  key: password
           ports:
             - containerPort: 8080
               name: http
               protocol: TCP
           resources:
-            requests: # Минимальное гарантируемые ресурсы
+            requests:
               cpu: "500m"
               memory: "256Mi"
-            limits: # Максимально допустимые ресурсы
+            limits:
               cpu: "1000m"
               memory: "1Gi"
           livenessProbe:

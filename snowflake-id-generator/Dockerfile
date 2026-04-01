@@ -18,6 +18,8 @@ RUN ./gradlew clean build -x test -x ktlintKotlinScriptCheck -x ktlintMainSource
 # Подключение JRE фиксированной версии
 FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
+# Установить psql client
+RUN apt-get update && apt-get install -y postgresql-client
 # Создание пользования с минимальными правами
 RUN useradd --system --create-home --uid 1001 appuser
 USER appuser
